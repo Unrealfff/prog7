@@ -41,7 +41,7 @@ public class Server {
             register("save", new Save(console, collectionManager));
             register("show", new Show(console, collectionManager, dumpManager));
             register("update", new Update(console, collectionManager, dumpManager));
-            //register("history", new History(console, this));
+            register("login", new Login(console, dumpManager));
             register("print_field_descending_distance", new PrintFieldDescendingDistance(console, collectionManager, dumpManager));
             register("count_greater_than_distance", new CountGreaterThanDistance(console, collectionManager, dumpManager));
             register("remove_any_by_distance", new RemoveAnyByDistance(console, collectionManager, dumpManager));

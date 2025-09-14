@@ -76,8 +76,9 @@ public class NetworkManager {
             //var data = new String(byteBuffer.array(), byteBuffer.position(), bytesRead);
             var data = deserialize(inBuffer.array());
             inBuffer.clear();
-            Future<Response> response = cachedPool.submit(() -> processData(data));
-            sendData(response, client);
+            cachedPool.execute(() -> processData(data, client));
+            //Future<Response> response = cachedPool.submit(() -> processData(data, client));
+            //sendData(response, client);
             //return data;
         }
         catch (IOException e){
@@ -85,7 +86,7 @@ public class NetworkManager {
         }
     }
 
-    public Response processData(Container containerFuture) {
+    public void processData(Container containerFuture, SocketChannel client) {
         /*while(!containerFuture.isDone()) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
@@ -95,23 +96,25 @@ public class NetworkManager {
             }
         }*/
         try {
-            return router.run(containerFuture);
+            //return router.run(containerFuture);
+            writePool.execute(() -> sendData(router.run(containerFuture), client));
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void sendData(Future<Response> responseFuture, SocketChannel client) {
-        while(!responseFuture.isDone()) {
+    public void sendData(Response responseFuture, SocketChannel client) {
+        /*while(!responseFuture.isDone()) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
             }
             catch (InterruptedException e) {
                 responseFuture.cancel(true);
             }
-        }
+        }*/
         try {
-            ByteBuffer outBuffer = ByteBuffer.wrap(serializer(responseFuture.get()));
+            ByteBuffer outBuffer = ByteBuffer.wrap(serializer(responseFuture));
             //outBuffer.flip();
             try {
                 while (outBuffer.hasRemaining()) {
@@ -133,15 +136,15 @@ public class NetworkManager {
 
     public void run() {
         try {
-        while (running) {
-            try {
-                TimeUnit.MILLISECONDS.sleep(100);
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            checkInput();
-            if(!running) break;
+            while (running) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                }
+                catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                checkInput();
+                if(!running) break;
                 if(selector.select() == 0) continue;
                 //System.out.println(selector.selectedKeys().size());
                 for (var key : selector.selectedKeys()) {
@@ -230,8 +233,8 @@ public class NetworkManager {
                     System.exit(0);
                     break;
                 //case "save":
-                 //   router.run(new Container(Commands.Save, ""));
-                   // break;
+                //   router.run(new Container(Commands.Save, ""));
+                // break;
             }
         }
     }

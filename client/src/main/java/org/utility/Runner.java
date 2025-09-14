@@ -31,6 +31,7 @@ public class Runner {
     private NetworkManager networkManager;
     private Map<Commands, Command> clientCommands;
     private ArrayList<String> history;
+    private String[] usr;
 
 
     public Runner(NetworkManager networkManager, Console console, Map<Commands,String[]> commands) {
@@ -46,7 +47,7 @@ public class Runner {
     }
 
     public String[] login(){
-        while (true) {
+        /*while (true) {
             console.println("enter login");
             console.prompt();
             String login = console.readln().trim();
@@ -55,7 +56,8 @@ public class Runner {
             String password = console.readPassword().trim();
             String[] data = {login, cypher(password)};
             return data;
-        }
+        }*/
+        return this.usr;
     }
 
     public String cypher(String password) {
@@ -81,7 +83,45 @@ public class Runner {
         try {
             Response commandStatus;
             String[] userCommand = {"", ""};
-
+            while (true) {
+                System.out.println("register or login?");
+                console.prompt();
+                String logreg = console.readln().trim();
+                if (!logreg.equals("login") && !logreg.equals("register")) {
+                    console.println("enter 'register' or 'login'");
+                    continue;
+                }
+                console.println("enter login");
+                console.prompt();
+                String login = console.readln().trim();
+                console.println("enter password");
+                console.print("# ");
+                String password = console.readPassword().trim();
+                String[] data = {login, cypher(password)};
+                this.usr = data;
+                Response response;
+                if (logreg.equals("register")) {
+                    try {
+                        response = launchCommand("register ".split(" ", 2));
+                    } catch (Exception e) {
+                        console.printError("unexpected errer: " + e);
+                        continue;
+                    }
+                } else {
+                    try {
+                        response = launchCommand("login ".split(" ", 2));
+                    } catch (Exception e) {
+                        console.printError("unexpected errer: " + e);
+                        continue;
+                    }
+                }
+                console.println(response.getMessage());
+                if (response.getExitCode() == 1) {
+                    break;
+                }
+            }
+            this.commands.remove(Commands.Login);
+            this.commands.remove(Commands.Register);
             while (true) {
                 try {
                     console.prompt();

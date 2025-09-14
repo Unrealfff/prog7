@@ -22,6 +22,7 @@ public enum Commands implements Serializable {
     RemoveAnyByDistance("remove_any_by_distance"),
     CountGreaterThanDistance("count_greater_than_distance"),
     Register("register"),
+    Login("login"),
     PrintFieldDescendingDistance("print_field_descending_distance");
 
     private String type;

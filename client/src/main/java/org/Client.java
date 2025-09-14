@@ -34,6 +34,7 @@ public class Client {
         commands.put(Commands.CountGreaterThanDistance, new String[]{"count_greater_than_distance", "count_greater_than_distance distance - number of elements with distance greater then given"});
         commands.put(Commands.PrintFieldDescendingDistance, new String[]{"print_field_descending_distance", "print_field_descending_distance - prints all distances in descending order"});
         commands.put(Commands.Register, new String[]{"register", "register - registers a new user"});
+        commands.put(Commands.Login, new String[]{"login", "login - logs in a new user user"});
         commands.put(Commands.RemoveAnyByDistance, new String[]{"remove_any_by_distance", "remove_any_by_distance distance - removes 1 element with given distance"});
         commands.put(Commands.History, new String[]{"history", "history - displays last 9 commands"});
 
